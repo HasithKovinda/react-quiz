@@ -10,7 +10,8 @@ type optionProps={
 function Options({question}:optionProps) {
   const{answer,dispatch} =useQuiz()
   const hasAnswered = answer!==null
- 
+  // const a= savedAnswers.filter((ans)=>ans.questionNumber===index+1)
+  // console.log('a',a)
   return (
     <div className="options">
         {
