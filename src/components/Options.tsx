@@ -1,13 +1,16 @@
-import { type Dispatch } from "react"
-import { type Action, type question} from "../App"
-type optionProps = {
-    question:question
-    dispatch:Dispatch<Action>
-    answer:number|null
+
+
+import { question } from "../context/context"
+import { useQuiz } from "../context/useContext"
+
+type optionProps={
+  question:question
 }
 
-function Options({question,dispatch,answer}:optionProps) {
-  const hasAnswered = answer!==null  
+function Options({question}:optionProps) {
+  const{answer,dispatch} =useQuiz()
+  const hasAnswered = answer!==null
+ 
   return (
     <div className="options">
         {

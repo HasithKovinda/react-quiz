@@ -1,14 +1,8 @@
-import { type Dispatch } from "react"
-import { type Action } from "../App"
 
-type nextButtonProps = {
-    dispatch:Dispatch<Action>
-    answer:number | null
-    index:number
-    numQuestions:number
-}
+import { useQuiz } from "../context/useContext"
 
-function NextButton({dispatch,answer,index,numQuestions}:nextButtonProps) {
+function NextButton() {
+  const{answer,index,numQuestions,dispatch} =useQuiz()
   if(answer===null) return null
   if(index<numQuestions-1)
   return (

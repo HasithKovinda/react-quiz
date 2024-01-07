@@ -1,14 +1,8 @@
-import { Dispatch } from "react"
-import { Action } from "../App"
 
-type finishedScreenProps={
-    points:number
-    maxPossiblePoints:number
-    highScore:number
-    dispatch:Dispatch<Action>
-}
+import { useQuiz } from "../context/useContext"
 
-function FinishedScreen({points,maxPossiblePoints,highScore,dispatch}:finishedScreenProps) {
+function FinishedScreen() {
+  const{points,maxPossiblePoints,highScore,dispatch}= useQuiz()
 
   const percentage = (points / maxPossiblePoints) * 100;
 
