@@ -1,11 +1,14 @@
+import { Dispatch } from "react"
+import { Action } from "../App"
 
 type finishedScreenProps={
     points:number
     maxPossiblePoints:number
     highScore:number
+    dispatch:Dispatch<Action>
 }
 
-function FinishedScreen({points,maxPossiblePoints,highScore}:finishedScreenProps) {
+function FinishedScreen({points,maxPossiblePoints,highScore,dispatch}:finishedScreenProps) {
 
   const percentage = (points / maxPossiblePoints) * 100;
 
@@ -25,7 +28,7 @@ function FinishedScreen({points,maxPossiblePoints,highScore}:finishedScreenProps
       <p className="highscore">(Highscore: {highScore} points)</p>
       <button
         className="btn btn-ui"
-        // onClick={() => dispatch({ type: "restart" })}
+        onClick={() => dispatch({ type: "restart" })}
       >
         Restart quiz
       </button>

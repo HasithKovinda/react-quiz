@@ -9,7 +9,6 @@ type nextButtonProps = {
 }
 
 function NextButton({dispatch,answer,index,numQuestions}:nextButtonProps) {
-  console.log(numQuestions)
   if(answer===null) return null
   if(index<numQuestions-1)
   return (
