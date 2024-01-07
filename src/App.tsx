@@ -7,7 +7,7 @@ import StartScreen from "./components/StartScreen"
 import Question from "./components/Question"
 
 // Types definitions
-export type questions ={
+export type question ={
   question:string,
   options: string [],
   correctOption:number,
@@ -15,14 +15,16 @@ export type questions ={
 }
 
 type questionsState ={
-  questions:questions []
+  questions:question []
   status:'loading' | 'error' | 'ready' | 'active' | 'finished'
-  index:number
+  index:number,
+  answer:number | null
+  points:number
 }
 
 type fetchData ={
   type:'dataReceived',
-  payload:questions []
+  payload:question []
 }
 
 type fetchError={
@@ -33,13 +35,20 @@ type displayQuestions={
   type:'start'
 }
 
-export type Action= fetchData | fetchError | displayQuestions
+type markedAnswer={
+  type:'newAnswer'
+  payload:number
+}
+
+export type Action= fetchData | fetchError | displayQuestions | markedAnswer
 
 
 const initialState:questionsState={
   questions:[],
   status:'loading',
-  index:0
+  index:0,
+  answer:null,
+  points:0
 }
 
  function reducer(state:questionsState,action:Action):questionsState{
@@ -54,13 +63,18 @@ const initialState:questionsState={
           }  
         case 'start':
           return {...state,status:'active'}  
+        case 'newAnswer':{
+          const currentQuestion:question = state.questions[state.index]
+          
+          return {...state,answer:action.payload,points:action.payload===currentQuestion.correctOption ? state.points+currentQuestion.points:state.points,} 
+        }
         default:
           throw new Error("Known action")
      }
  } 
 
 function App() {
-  const [{status,questions,index},dispatch]=useReducer(reducer,initialState)
+  const [{status,questions,index,answer},dispatch]=useReducer(reducer,initialState)
 
   const numQuestions= questions.length
   
@@ -68,7 +82,7 @@ function App() {
     async function fetchData(){
      try {
       const data = await fetch('http://localhost:9000/questions')
-      const results = await data.json() as questions []
+      const results = await data.json() as question []
       dispatch({type:'dataReceived',payload:results})
      }
      catch (error) {
@@ -85,7 +99,7 @@ function App() {
        {status==='loading' && <Loader/>}
        {status==='error' && <ErrorComponent/>}
        {status==='ready' && <StartScreen numQuestions={numQuestions} dispatch={dispatch} />}
-       {status==='active' && <Question loadQuestion={questions[index]} />}
+       {status==='active' && <Question loadQuestion={questions[index]} dispatch={dispatch} answer={answer} />}
      </Main>
     </div>
   )
