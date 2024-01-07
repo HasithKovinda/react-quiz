@@ -1,0 +1,1 @@
+export const NUMBER_SECOND_PER_QUESTION=30

@@ -5,6 +5,12 @@ import Loader from "./components/Loader"
 import ErrorComponent from "./components/Error"
 import StartScreen from "./components/StartScreen"
 import Question from "./components/Question"
+import NextButton from "./components/NextButton"
+import Progress from "./components/Progress"
+import FinishedScreen from "./components/FinishedScreen"
+import { NUMBER_SECOND_PER_QUESTION } from "./util/constant"
+import Footer from "./components/Footer"
+import Timer from "./components/Timer"
 
 // Types definitions
 export type question ={
@@ -20,6 +26,8 @@ type questionsState ={
   index:number,
   answer:number | null
   points:number
+  highScore:number
+  secondsRemaining:number
 }
 
 type fetchData ={
@@ -40,7 +48,23 @@ type markedAnswer={
   payload:number
 }
 
-export type Action= fetchData | fetchError | displayQuestions | markedAnswer
+type moveNext={
+  type:'nextQuestion'
+}
+
+type finished={
+  type:'finish'
+}
+
+type reset={
+  type:'restart'
+}
+
+type timer={
+  type:'tick'
+}
+
+export type Action= fetchData | fetchError | displayQuestions | markedAnswer | moveNext | finished | reset | timer
 
 
 const initialState:questionsState={
@@ -48,7 +72,9 @@ const initialState:questionsState={
   status:'loading',
   index:0,
   answer:null,
-  points:0
+  points:0,
+  highScore:0,
+  secondsRemaining:0
 }
 
  function reducer(state:questionsState,action:Action):questionsState{
@@ -62,20 +88,29 @@ const initialState:questionsState={
             ...state,status:'error'
           }  
         case 'start':
-          return {...state,status:'active'}  
+          return {...state,status:'active' ,secondsRemaining:state.questions.length* NUMBER_SECOND_PER_QUESTION }  
         case 'newAnswer':{
           const currentQuestion:question = state.questions[state.index]
           return {...state,answer:action.payload,points:action.payload===currentQuestion.correctOption ? state.points+currentQuestion.points:state.points,} 
         }
+        case 'nextQuestion':
+           return {...state,index:state.index+1,answer:null}
+        case 'finish':
+          return {...state,status:'finished',highScore:state.points>state.highScore ? state.points:state.highScore}  
+        case 'restart':
+          return{...initialState,status:'ready',questions:state.questions, highScore:state.highScore}  
+        case 'tick':
+          return{...state,secondsRemaining:state.secondsRemaining-1,status:state.secondsRemaining===0 ? 'finished':state.status}   
         default:
           throw new Error("Known action")
      }
  } 
 
 function App() {
-  const [{status,questions,index,answer},dispatch]=useReducer(reducer,initialState)
+  const [{status,questions,index,answer,points,highScore,secondsRemaining},dispatch]=useReducer(reducer,initialState)
 
   const numQuestions= questions.length
+  const maxPossiblePoints = questions.reduce((pre,curr)=>pre+curr.points,0)
   
   useEffect(()=>{
     async function fetchData(){
@@ -98,7 +133,17 @@ function App() {
        {status==='loading' && <Loader/>}
        {status==='error' && <ErrorComponent/>}
        {status==='ready' && <StartScreen numQuestions={numQuestions} dispatch={dispatch} />}
-       {status==='active' && <Question loadQuestion={questions[index]} dispatch={dispatch} answer={answer} />}
+       {status==='active' && 
+        <>
+         <Progress index={index} maxPossiblePoints={maxPossiblePoints} points={points} numQuestions={numQuestions} answer={answer} />
+         <Question loadQuestion={questions[index]} dispatch={dispatch} answer={answer} />
+         <Footer>
+         <Timer dispatch={dispatch} secondsRemaining={secondsRemaining} />
+         <NextButton dispatch={dispatch} answer={answer} index={index} numQuestions={numQuestions} />
+         </Footer>
+        </>
+       }
+       {status==='finished' && <FinishedScreen points={points} maxPossiblePoints={maxPossiblePoints} highScore={highScore} dispatch={dispatch}/>}
      </Main>
     </div>
   )
