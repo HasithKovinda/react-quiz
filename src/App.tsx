@@ -5,6 +5,9 @@ import Loader from "./components/Loader"
 import ErrorComponent from "./components/Error"
 import StartScreen from "./components/StartScreen"
 import Question from "./components/Question"
+import NextButton from "./components/NextButton"
+import Progress from "./components/Progress"
+import FinishedScreen from "./components/FinishedScreen"
 
 // Types definitions
 export type question ={
@@ -20,6 +23,7 @@ type questionsState ={
   index:number,
   answer:number | null
   points:number
+  highScore:number
 }
 
 type fetchData ={
@@ -40,7 +44,15 @@ type markedAnswer={
   payload:number
 }
 
-export type Action= fetchData | fetchError | displayQuestions | markedAnswer
+type moveNext={
+  type:'nextQuestion'
+}
+
+type finished={
+  type:'finish'
+}
+
+export type Action= fetchData | fetchError | displayQuestions | markedAnswer |moveNext |finished
 
 
 const initialState:questionsState={
@@ -48,7 +60,8 @@ const initialState:questionsState={
   status:'loading',
   index:0,
   answer:null,
-  points:0
+  points:0,
+  highScore:0
 }
 
  function reducer(state:questionsState,action:Action):questionsState{
@@ -67,15 +80,20 @@ const initialState:questionsState={
           const currentQuestion:question = state.questions[state.index]
           return {...state,answer:action.payload,points:action.payload===currentQuestion.correctOption ? state.points+currentQuestion.points:state.points,} 
         }
+        case 'nextQuestion':
+           return {...state,index:state.index+1,answer:null}
+        case 'finish':
+          return {...state,status:'finished',highScore:state.points>state.highScore ? state.points:state.highScore}   
         default:
           throw new Error("Known action")
      }
  } 
 
 function App() {
-  const [{status,questions,index,answer},dispatch]=useReducer(reducer,initialState)
+  const [{status,questions,index,answer,points,highScore},dispatch]=useReducer(reducer,initialState)
 
   const numQuestions= questions.length
+  const maxPossiblePoints = questions.reduce((pre,curr)=>pre+curr.points,0)
   
   useEffect(()=>{
     async function fetchData(){
@@ -98,7 +116,14 @@ function App() {
        {status==='loading' && <Loader/>}
        {status==='error' && <ErrorComponent/>}
        {status==='ready' && <StartScreen numQuestions={numQuestions} dispatch={dispatch} />}
-       {status==='active' && <Question loadQuestion={questions[index]} dispatch={dispatch} answer={answer} />}
+       {status==='active' && 
+        <>
+         <Progress index={index} maxPossiblePoints={maxPossiblePoints} points={points} numQuestions={numQuestions} answer={answer} />
+         <Question loadQuestion={questions[index]} dispatch={dispatch} answer={answer} />
+         <NextButton dispatch={dispatch} answer={answer} index={index} numQuestions={numQuestions} />
+        </>
+       }
+       {status==='finished' && <FinishedScreen points={points} maxPossiblePoints={maxPossiblePoints} highScore={highScore} />}
      </Main>
     </div>
   )
