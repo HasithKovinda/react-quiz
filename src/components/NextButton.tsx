@@ -1,24 +1,20 @@
-import { type Dispatch } from "react"
-import { type Action } from "../App"
 
-type nextButtonProps = {
-    dispatch:Dispatch<Action>
-    answer:number | null
-    index:number
-    numQuestions:number
-}
+import { ReactNode } from "react"
+import { useQuiz } from "../context/useContext"
 
-function NextButton({dispatch,answer,index,numQuestions}:nextButtonProps) {
-  if(answer===null) return null
-  if(index<numQuestions-1)
+function NextButton() {
+  const{answer,index,numQuestions,dispatch} =useQuiz()
+  const btnElement:ReactNode=<button className="btn btn-ui" onClick={()=>dispatch({type:'nextQuestion'})}>Backs</button>
+  if(answer===null) return index===0 ? null :btnElement 
   return (
-    <button className="btn btn-ui" onClick={()=>dispatch({type:'nextQuestion'})}>Next</button>
+    <>
+    {(index===numQuestions-1)&& <button className="btn btn-ui" onClick={()=>dispatch({type:'finish'})}>Finish</button>}
+    {index<numQuestions-1 && <button className="btn btn-ui" onClick={()=>dispatch({type:'nextQuestion'})}>Next</button> } 
+    {(index>0 && index<=numQuestions-1) && btnElement } 
+    </>
+    
   )
 
-  if(index===numQuestions-1)
-  return (
-    <button className="btn btn-ui" onClick={()=>dispatch({type:'finish'})}>Finish</button>
-  )
 }
 
 export default NextButton
