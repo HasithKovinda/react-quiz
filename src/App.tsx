@@ -4,9 +4,10 @@ import Main from "./components/Main"
 import Loader from "./components/Loader"
 import ErrorComponent from "./components/Error"
 import StartScreen from "./components/StartScreen"
+import Question from "./components/Question"
 
 // Types definitions
-type questions ={
+export type questions ={
   question:string,
   options: string [],
   correctOption:number,
@@ -14,8 +15,9 @@ type questions ={
 }
 
 type questionsState ={
-  question:questions []
+  questions:questions []
   status:'loading' | 'error' | 'ready' | 'active' | 'finished'
+  index:number
 }
 
 type fetchData ={
@@ -27,33 +29,40 @@ type fetchError={
   type:'dataError'
 }
 
-type Action= fetchData | fetchError
+type displayQuestions={
+  type:'start'
+}
+
+export type Action= fetchData | fetchError | displayQuestions
 
 
 const initialState:questionsState={
-  question:[],
-  status:'loading'
+  questions:[],
+  status:'loading',
+  index:0
 }
 
  function reducer(state:questionsState,action:Action):questionsState{
      switch(action.type){
         case 'dataReceived':
           return {
-           ...state,question:action.payload,status:'ready'
+           ...state,questions:action.payload,status:'ready'
           }
         case 'dataError':
           return{
             ...state,status:'error'
           }  
+        case 'start':
+          return {...state,status:'active'}  
         default:
           throw new Error("Known action")
      }
  } 
 
 function App() {
-  const [{status,question},dispatch]=useReducer(reducer,initialState)
+  const [{status,questions,index},dispatch]=useReducer(reducer,initialState)
 
-  const numQuestions= question.length
+  const numQuestions= questions.length
   
   useEffect(()=>{
     async function fetchData(){
@@ -75,7 +84,8 @@ function App() {
      <Main>
        {status==='loading' && <Loader/>}
        {status==='error' && <ErrorComponent/>}
-       {status==='ready' && <StartScreen numQuestions={numQuestions} />}
+       {status==='ready' && <StartScreen numQuestions={numQuestions} dispatch={dispatch} />}
+       {status==='active' && <Question loadQuestion={questions[index]} />}
      </Main>
     </div>
   )
