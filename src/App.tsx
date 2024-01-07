@@ -65,7 +65,6 @@ const initialState:questionsState={
           return {...state,status:'active'}  
         case 'newAnswer':{
           const currentQuestion:question = state.questions[state.index]
-          
           return {...state,answer:action.payload,points:action.payload===currentQuestion.correctOption ? state.points+currentQuestion.points:state.points,} 
         }
         default:
