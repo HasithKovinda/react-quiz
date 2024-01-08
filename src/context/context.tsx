@@ -120,11 +120,12 @@ function reducer(state:questionsState,action:Action):questionsState{
          let currentIndexNumber = state.index
          const questionNumber= currentIndexNumber+=2
          const result:answeredQuestions | undefined = state.savedAnswers.find((ans)=>ans.questionNumber===questionNumber)
-         console.log(result)
          return {...state,index:state.index+1,answer: result===undefined ? null:result.answer}
        }
-       case 'back':
-          return{...state,index:state.index-1}   
+       case 'back':{
+        const result:answeredQuestions | undefined = state.savedAnswers.find((ans)=>ans.questionNumber===state.index)
+          return{...state,index:state.index-1,answer:result===undefined ? null:result.answer}   
+       }
        case 'finish':
          return {...state,status:'finished',highScore:state.points>state.highScore ? state.points:state.highScore}  
        case 'restart':
