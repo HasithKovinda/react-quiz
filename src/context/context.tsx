@@ -145,7 +145,7 @@ function QuizProvider({children}:quizProviderProp){
  useEffect(()=>{
     async function fetchData(){
      try {
-      const data = await fetch('http://localhost:9000/questions')
+      const data = await fetch('https://json-server-pied-rho.vercel.app/api/questions')
       const results = await data.json() as question []
       dispatch({type:'dataReceived',payload:results})
      }
