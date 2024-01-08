@@ -11,16 +11,17 @@ import FinishedScreen from "./components/FinishedScreen"
 import Footer from "./components/Footer"
 import Timer from "./components/Timer"
 import { useQuiz } from "./context/useContext"
+import Content from "./components/Content"
 
 function App() {
-  const{status}= useQuiz()
+  const{status,process}= useQuiz()
   return (
     <div className="app">
      <Header/>
      <Main>
        {status==='loading' && <Loader/>}
        {status==='error' && <ErrorComponent/>}
-       {status==='ready' && <StartScreen/>}
+       {status==='ready' && (process ? <StartScreen/>:<Content/>)}
        {status==='active' && 
         <>
          <Progress/>

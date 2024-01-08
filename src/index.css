@@ -37,7 +37,7 @@ body {
 }
 
 .main {
-  width: 50rem;
+  width: 80rem;
 }
 
 .app-header {
@@ -256,4 +256,31 @@ progress {
 .counter * {
   font-size: inherit;
   padding: 0.8rem;
+}
+
+.content{
+  text-align: center;
+}
+
+
+/* .image-section{
+  background: red;
+  text-align: center;
+} */
+
+.image-section img {
+
+  width: 130px;
+  height: 130px;
+  cursor: pointer;
+  transition: all .5s ease-in-out;
+  /* border-radius: 50%; */
+}
+
+.image-section img:hover{
+  scale: 1.2;
+}
+
+.filer-section{
+  font-size: 5rem;
 }

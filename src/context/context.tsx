@@ -7,7 +7,8 @@ export type question ={
     question:string,
     options: string [],
     correctOption:number,
-    points:number
+    points:number,
+    difficulty:string
 }
   
   
@@ -16,7 +17,13 @@ export type question ={
      answer:number
   }
 
+  type allQuestions={
+    category:'string',
+    all_questions:question []
+  }
+
   type questionsState ={
+    allQuestions:allQuestions []
     questions:question []
     status:'loading' | 'error' | 'ready' | 'active' | 'finished'
     index:number,
@@ -25,12 +32,22 @@ export type question ={
     points:number
     highScore:number
     secondsRemaining:number
+    category: string
+    difficulty:string
+    totalQuestions:number,
+    takeQuestions:number
+    process:boolean
   }
+
+
+  //'react' | 'html' | 'css' | 'javascript' | 'typescript'
+  //'easy' | 'medium' | 'hard'
+
 
   type dispatchAction={
     dispatch:Dispatch<Action>
-    numQuestions:number,
-    maxPossiblePoints:number
+    // numQuestions:number,
+    // maxPossiblePoints:number
   }
 
   type quizContextType=questionsState & dispatchAction
@@ -42,7 +59,7 @@ export type question ={
   
   type fetchData ={
     type:'dataReceived',
-    payload:question []
+    payload:allQuestions []
   }
   
   type fetchError={
@@ -77,11 +94,36 @@ export type question ={
   type goBack={
     type:'back'
   }
+
+  //Think optimized
+  type category={
+    type:'selectCategory'
+    payload:string
+  }
+
+  type difficulty={
+    type:'difficulty'
+    payload:string
+  }
+
+  type totalQuestions={
+    type:'total'
+    payload:number
+  }
+
+  type process={
+    type:'process'
+  }
+
+  type changeCategory={
+    type:'changeCategory'
+  }
   
-  export type Action= fetchData | fetchError | displayQuestions | markedAnswer | moveNext | finished | reset | timer | goBack
+  export type Action= fetchData | fetchError | displayQuestions | markedAnswer | moveNext | finished | reset | timer | goBack | category | difficulty | totalQuestions | process |changeCategory
   
   
   const initialState:questionsState={
+    allQuestions:[],
     questions:[],
     status:'loading',
     index:0,
@@ -89,7 +131,12 @@ export type question ={
     points:0,
     highScore:0,
     savedAnswers:[],
-    secondsRemaining:0
+    secondsRemaining:0,
+    category:'react',
+    difficulty:'all',
+    totalQuestions:15,
+    takeQuestions:15,
+    process:false
   }
   
 
@@ -98,15 +145,45 @@ type quizProviderProp={
 }
 
 function reducer(state:questionsState,action:Action):questionsState{
-    switch(action.type){
+    switch(action.type){  
        case 'dataReceived':
          return {
-          ...state,questions:action.payload,status:'ready'
+          ...state,allQuestions:action.payload,status:'ready'
          }
        case 'dataError':
          return{
            ...state,status:'error'
-         }  
+         } 
+        case 'selectCategory':{
+          const res= state.allQuestions.find((ques)=>ques.category===action.payload)!
+          return {...state,category:action.payload,questions:res.all_questions}
+        }
+        case 'difficulty':{
+          const totalQuestions = state.questions.filter((ques)=>ques.difficulty===action.payload)
+          const length = action.payload==='all' ? state.questions.length : totalQuestions.length
+          return {...state,difficulty:action.payload,totalQuestions:length,takeQuestions:length}  
+        }
+        case 'total':
+           return {...state,takeQuestions:action.payload}    
+        
+        case 'changeCategory':
+          return {...state,difficulty:'all',totalQuestions:15,takeQuestions:15}   
+           
+        case 'process':{
+          let newQuestions:question []
+          const takeQuestionLen = state.takeQuestions
+          const difficulty = state.difficulty
+          let filterByDiff = state.questions.filter((ques)=>ques.difficulty=== difficulty)
+          console.log(state.difficulty)
+          state.difficulty==='all' ? filterByDiff=state.questions : filterByDiff
+          console.log(filterByDiff)
+          if(filterByDiff.length===takeQuestionLen){
+            newQuestions=filterByDiff
+          } else{
+            newQuestions = filterByDiff.splice(state.takeQuestions, 1)
+          }
+          return {...state,questions:newQuestions,process:true}
+        }   
        case 'start':
          return {...state,status:'active' ,secondsRemaining:state.questions.length* NUMBER_SECOND_PER_QUESTION }  
        case 'newAnswer':{
@@ -138,16 +215,14 @@ function reducer(state:questionsState,action:Action):questionsState{
 } 
 
 function QuizProvider({children}:quizProviderProp){
- const [{status,questions,index,answer,points,highScore,secondsRemaining,savedAnswers},dispatch]=useReducer(reducer,initialState)
-
- const numQuestions= questions.length
- const maxPossiblePoints = questions.reduce((pre,curr)=>pre+curr.points,0)
+ const [{status,questions,index,answer,process, points,highScore,secondsRemaining,savedAnswers,category,difficulty,totalQuestions,allQuestions,takeQuestions},dispatch]=useReducer(reducer,initialState)
+//  const maxPossiblePoints = questions.reduce((pre,curr)=>pre+curr.points,0)
 
  useEffect(()=>{
     async function fetchData(){
      try {
       const data = await fetch('https://json-server-pied-rho.vercel.app/api/questions')
-      const results = await data.json() as question []
+      const results = await data.json() as allQuestions []
       dispatch({type:'dataReceived',payload:results})
      }
      catch (error) {
@@ -155,10 +230,10 @@ function QuizProvider({children}:quizProviderProp){
      }
     }
     fetchData()
-  },[])
+  },[category])
 
   return (
-    <QuizContext.Provider value={{status,answer,questions,index,points,highScore,secondsRemaining, numQuestions,maxPossiblePoints,savedAnswers, dispatch}}>
+    <QuizContext.Provider value={{status,answer,questions,index,points,highScore,secondsRemaining,savedAnswers, process, category,difficulty,totalQuestions,allQuestions,takeQuestions, dispatch}}>
         {children}
     </QuizContext.Provider>
   )
