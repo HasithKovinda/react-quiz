@@ -4,7 +4,7 @@ import { useQuiz } from "../context/useContext"
 
 function NextButton() {
   const{answer,index,numQuestions,dispatch} =useQuiz()
-  const btnElement:ReactNode=<button className="btn btn-ui" onClick={()=>dispatch({type:'nextQuestion'})}>Backs</button>
+  const btnElement:ReactNode=<button className="btn btn-ui" onClick={()=>dispatch({type:'back'})}>Backs</button>
   if(answer===null) return index===0 ? null :btnElement 
   return (
     <>
