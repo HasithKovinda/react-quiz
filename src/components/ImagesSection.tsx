@@ -29,8 +29,10 @@ function ImagesSection() {
         }
     </div>:<Filter/>
   } 
-   {!show && <button className="btn" onClick={handleChangeCategory}>Change Category</button>}
-   {!show && <button className="btn" onClick={()=>dispatch({type:'process'})}>Next</button>}
+    <div className="btn-list">
+    {!show && <button className="btn" onClick={handleChangeCategory}>Change Category</button>}
+    {!show && <button className="btn" onClick={()=>dispatch({type:'process'})}>Next</button>}
+    </div>
     </>
   )
 }

@@ -23,7 +23,7 @@ function Filter() {
    <>
      <article className="filer-section">
         <div>
-            <h5>Choose Difficulty</h5>
+            <h6>Choose Difficulty</h6>
             <select name="cars" id="cars" onChange={handleOptions}>
                 <option value="all">All</option>
                 <option value="easy">Easy</option>
@@ -32,7 +32,7 @@ function Filter() {
             </select>
         </div>
         <div>
-            <h5>Select number of questions</h5>
+            <h6>Select number of questions</h6>
             <input type="range" min={1} max={totalQuestions} value={takeQuestions} onChange={handleNumberOfQuestions}/>
             <p>Number question selected {takeQuestions}</p>
         </div>

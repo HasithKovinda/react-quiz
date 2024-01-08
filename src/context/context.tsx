@@ -32,7 +32,7 @@ export type question ={
     points:number
     highScore:number
     secondsRemaining:number
-    category: string
+    category: string | null
     difficulty:string
     totalQuestions:number,
     takeQuestions:number
@@ -132,7 +132,7 @@ export type question ={
     highScore:0,
     savedAnswers:[],
     secondsRemaining:0,
-    category:'react',
+    category:null,
     difficulty:'all',
     totalQuestions:15,
     takeQuestions:15,
@@ -170,7 +170,7 @@ function reducer(state:questionsState,action:Action):questionsState{
           return {...state,difficulty:'all',totalQuestions:15,takeQuestions:15}   
            
         case 'process':{
-          let newQuestions:question []
+          let newQuestions:question []=[]
           const takeQuestionLen = state.takeQuestions
           const difficulty = state.difficulty
           let filterByDiff = state.questions.filter((ques)=>ques.difficulty=== difficulty)
@@ -180,7 +180,9 @@ function reducer(state:questionsState,action:Action):questionsState{
           if(filterByDiff.length===takeQuestionLen){
             newQuestions=filterByDiff
           } else{
-            newQuestions = filterByDiff.splice(state.takeQuestions, 1)
+            for (let i = 0; i < state.takeQuestions; i++) {
+              newQuestions.push(filterByDiff[i]);
+            }
           }
           return {...state,questions:newQuestions,process:true}
         }   

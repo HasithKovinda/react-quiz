@@ -10,7 +10,9 @@ function Header() {
   return (
     <header className='app-header'>
       <img src={imageName} alt='React logo' />
-      <h1>The {process ? category.toLocaleUpperCase():''} Quiz</h1>
+      {
+        process ?<h1>The {category} Quiz</h1> :<h1>the quiz app</h1>
+      }
     </header>
   );
 }
