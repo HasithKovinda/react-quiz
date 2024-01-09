@@ -12,6 +12,7 @@ function ImagesSection() {
     setShow((pre) => !pre);
     console.log(imageName);
     const category = imageName.split(".png")[0];
+    console.log(category);
     dispatch({ type: "selectCategory", payload: category as catagoriesTypes });
   }
 

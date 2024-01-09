@@ -23,7 +23,12 @@ export type allQuestions = {
 
 export type difficultyTypes = "all" | "easy" | "medium" | "hard";
 
-export type catagoriesTypes = "html" | "css" | "javascript" | "react";
+export type catagoriesTypes =
+  | "html"
+  | "css"
+  | "javascript"
+  | "react"
+  | "typescript";
 
 export type questionsState = {
   allQuestions: allQuestions[];

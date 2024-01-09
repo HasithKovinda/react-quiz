@@ -27,10 +27,10 @@ function Filter() {
         <div>
           <h6>Choose Difficulty</h6>
           <select name="cars" id="cars" onChange={handleOptions}>
-            <option value="all">All</option>
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
+            <option value="all">All 😍</option>
+            <option value="easy">Easy 😒</option>
+            <option value="medium">Medium 😊</option>
+            <option value="hard">Hard 😘</option>
           </select>
         </div>
         <div>

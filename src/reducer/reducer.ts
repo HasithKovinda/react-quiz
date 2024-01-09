@@ -60,21 +60,16 @@ function reducer(state: questionsState, action: Action): questionsState {
     case "process": {
       let newQuestions: question[] = [];
       const takeQuestionLen = state.takeQuestions;
-      const difficulty = state.difficulty;
       let filterByDiff = state.questions.filter(
-        (ques) => ques.difficulty === difficulty
+        (ques) => ques.difficulty === state.difficulty
       );
-      console.log(state.difficulty);
       state.difficulty === Difficulty.ALL
         ? (filterByDiff = state.questions)
         : filterByDiff;
-      console.log(filterByDiff);
       if (filterByDiff.length === takeQuestionLen) {
         newQuestions = filterByDiff;
       } else {
-        for (let i = 0; i < state.takeQuestions; i++) {
-          newQuestions.push(filterByDiff[i]);
-        }
+        newQuestions = filterByDiff.slice(0, state.takeQuestions);
       }
       return { ...state, questions: newQuestions, process: true };
     }
