@@ -8,8 +8,6 @@ import {
 //dispatch action type
 export type dispatchAction = {
   dispatch: Dispatch<Action>;
-  // numQuestions:number,
-  // maxPossiblePoints:number
 };
 
 //Action types
@@ -51,7 +49,6 @@ type goBack = {
   type: "back";
 };
 
-//Think optimized
 type category = {
   type: "selectCategory";
   payload: catagoriesTypes;
