@@ -9,7 +9,6 @@
   --color-accent: #ffa94d;
 }
 
-
 * {
   margin: 0;
   padding: 0;
@@ -37,15 +36,27 @@ body {
 }
 
 .main {
-  width: 50rem;
+  width: 80rem;
+}
+.high-score {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #1098ad5d;
+  padding: 1.5rem 3rem;
+  border-radius: 10px;
+  letter-spacing: 1.6;
+  font-size: 20px;
 }
 
 .app-header {
-  width: 66rem;
+  width: 80rem;
   margin-bottom: 4rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  column-gap: 2rem;
+  margin-top: 10rem;
 }
 
 .error {
@@ -256,4 +267,52 @@ progress {
 .counter * {
   font-size: inherit;
   padding: 0.8rem;
+}
+
+.content {
+  text-align: center;
+}
+
+/* .image-section{
+  background: red;
+  text-align: center;
+} */
+
+.image-section img {
+  width: 130px;
+  height: 130px;
+  cursor: pointer;
+  transition: all 0.5s ease-in-out;
+  display: inline-block;
+  margin-left: 2rem;
+  /* border-radius: 50%; */
+}
+
+.image-section img:hover {
+  scale: 1.2;
+}
+
+.filer-section {
+  font-size: 5rem;
+}
+
+.filer-section select {
+  padding: 1rem 2rem;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+.filer-section p {
+  font-size: 3rem;
+  margin-bottom: 2rem;
+}
+
+.btn-list {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: space-around;
+}
+
+.space {
+  margin-right: 1rem;
 }
